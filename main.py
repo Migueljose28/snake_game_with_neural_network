@@ -7,7 +7,7 @@ matriz = [['.' for j in range(10)] for i in range(10)]
 direction = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
 
-def generate_position(item: str):
+def generate_position_item(item: str):
     """Generate apple position or starting position of the snake"""
     row = random.randint(0, len(matriz) - 1)
     col = random.randint(0, len(matriz[0]) - 1)
@@ -16,8 +16,8 @@ def generate_position(item: str):
 
 
 # Start snake and apple
-snake = [generate_position('@')]
-apple = generate_position('*')
+snake = [generate_position_item('@')]
+apple = generate_position_item('*')
 
 # start direction
 start_direction = random.choice(direction)
@@ -45,6 +45,14 @@ while game_should_continue:
             matriz[new_r][new_c] = '@'
             matriz[r][c] = '.'
             snake[i] = (new_r, new_c)
+
+    if snake[0] == apple:
+        d_r, d_c = start_direction  # modify after
+        r, c = apple
+        apple = generate_position_item('*')
+        new_item_r = r + d_r * -1
+        new_item_c = r + d_r * -1
+        snake.append((new_item_r, new_item_c))
 
     # Formated and print Matrix
     for i in matriz:
