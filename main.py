@@ -1,66 +1,32 @@
-import random
+from turtle import Turtle, Screen
 import time
 
-# Matriz as a plan for apple and snake
-matriz = [['.' for j in range(10)] for i in range(10)]
-# Direction: Right, Left, Up, Down
-direction = [(0, 1), (0, -1), (-1, 0), (1, 0)]
+screen = Screen()
+screen.setup(width=600, height=600)
+screen.bgcolor("black")
+screen.title("My Snake Game")
+screen.tracer(0)
 
+starting_positions = [(0, 0), (-20,0), (-40,0)]
 
-def generate_position_item(item: str):
-    """Generate apple position or starting position of the snake"""
-    row = random.randint(0, len(matriz) - 1)
-    col = random.randint(0, len(matriz[0]) - 1)
-    matriz[row][col] = item
-    return (row, col)
+segments = []
 
+for position in starting_positions:
+    new_segment = Turtle("square")
+    new_segment.color("white")
+    new_segment.penup()
+    new_segment.goto(position)
+    segments.append(new_segment)
 
-# Start snake and apple
-snake = [generate_position_item('@')]
-apple = generate_position_item('*')
+game_is_on = True
+while game_is_on:
+    screen.update()
+    time.sleep(0.1)
+    
+    for seg_num in range(len(segments) - 1, 0, -1):
+        new_x = segments[seg_num - 1].xcor()
+        new_y = segments[seg_num - 1].ycor()
+        segments[seg_num].goto(new_x, new_y)
+    segments[0].forward(20)
 
-# start direction
-start_direction = random.choice(direction)
-game_should_continue = True
-
-while game_should_continue:
-
-    for i, (r, c) in enumerate(snake):
-        d_r, d_c = start_direction
-        new_r = r + d_r
-        new_c = c + d_c
-        try:
-            matriz[new_r][new_c] = '@'
-
-        except IndexError:
-            r_last_item = len(matriz[r]) - 1
-            new_r = 0 if new_r >= r_last_item else new_r
-            new_r = r_last_item if new_r < 0 else new_r
-
-            c_last_item = len(matriz) - 1
-            new_c = 0 if new_c >= c_last_item else new_c
-            new_c = c_last_item if new_c < 0 else new_c
-
-        finally:
-            matriz[new_r][new_c] = '@'
-            matriz[r][c] = '.'
-            snake[i] = (new_r, new_c)
-
-    if snake[0] == apple:
-        d_r, d_c = start_direction  # modify after
-        r, c = apple
-        apple = generate_position_item('*')
-        new_item_r = r + d_r * -1
-        new_item_c = r + d_r * -1
-        snake.append((new_item_r, new_item_c))
-
-    # Formated and print Matrix
-    for i in matriz:
-        formated_list = ""
-        for j in i:
-            formated_list += j + " "
-        print(formated_list)
-
-    if game_should_continue:
-        time.sleep(0.8)
-        print("\n" * 10)
+screen.exitonclick()
